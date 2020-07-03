@@ -43,21 +43,12 @@ uint8_t keyword_model_tensor_arena[kKeywordModelTensorArenaSize];
 constexpr int kKeywordModelTensorCount = 54;
 constexpr int kKeywordModelNodeAndRegistrationCount = 15;
 
-// NOTE: These values are measured on x86-64:
-// TODO(b/158651472): Consider auditing these values on non-64 bit systems.
-//
-// Run this test with '--copt=-DTF_LITE_STATIC_MEMORY' to get optimized memory
-// runtime values:
-#ifdef TF_LITE_STATIC_MEMORY
-constexpr int kKeywordModelTotalSize = 18192;
-constexpr int kKeywordModelTailSize = 17520;
-#else
-constexpr int kKeywordModelTotalSize = 21152;
-constexpr int kKeywordModelTailSize = 20480;
-#endif
-constexpr int kKeywordModelHeadSize = 672;
+// NOTE: These values are measured on x86-64 and x86
+constexpr int kKeywordModelTotalSize = kIs64BitSystem ? 21040 : 16912;
+constexpr int kKeywordModelHeadSize = kIs64BitSystem ? 672 : 672;
+constexpr int kKeywordModelTailSize = kIs64BitSystem ? 20368 : 16240;
 constexpr int kKeywordModelTfLiteTensorVariableBufferDataSize = 10240;
-constexpr int kKeywordModelTfLiteTensorQuantizationDataSize = 1728;
+constexpr int kKeywordModelTfLiteTensorQuantizationDataSize = kIs64BitSystem ? 1728 : 1080;
 constexpr int kKeywordModelOpRuntimeDataSize = 148;
 
 constexpr int kTestConvModelArenaSize = 12 * 1024;
@@ -66,17 +57,11 @@ uint8_t test_conv_tensor_arena[kTestConvModelArenaSize];
 constexpr int kTestConvModelTensorCount = 15;
 constexpr int kTestConvModelNodeAndRegistrationCount = 7;
 
-// NOTE: These values are measured on x86-64:
-// TODO(b/158651472): Consider auditing these values on non-64 bit systems.
-#ifdef TF_LITE_STATIC_MEMORY
-constexpr int kTestConvModelTotalSize = 10816;
-constexpr int kTestConvModelTailSize = 3072;
-#else
-constexpr int kTestConvModelTotalSize = 11712;
-constexpr int kTestConvModelTailSize = 3968;
-#endif
-constexpr int kTestConvModelHeadSize = 7744;
-constexpr int kTestConvModelTfLiteTensorQuantizationDataSize = 768;
+// NOTE: These values are measured on x86-64 and x86
+constexpr int kTestConvModelTotalSize = kIs64BitSystem ? 11680 : 10400;
+constexpr int kTestConvModelHeadSize = kIs64BitSystem ? 7744 : 7744;
+constexpr int kTestConvModelTailSize = kIs64BitSystem ? 3936 : 2656;
+constexpr int kTestConvModelTfLiteTensorQuantizationDataSize =  kIs64BitSystem ? 768 : 608;
 constexpr int kTestConvModelOpRuntimeDataSize = 136;
 
 struct ModelAllocationThresholds {

@@ -35,6 +35,34 @@ void TestReshapeImpl(TfLiteContext* context, TfLiteNode* node,
                      std::initializer_list<T> expected_output,
                      std::initializer_list<int> expected_dims,
                      bool expect_failure) {
+  TfLiteContext context;
+  TfLiteTensor tensors[3];
+  TfLiteNode node;
+  int no_shape_inputs[] = {1, 0};
+  int no_shape_outputs[] = {1, 1};
+  int shape_inputs[] = {2, 0, 1};
+  int shape_outputs[] = {1, 2};
+  if (shape_tensor == nullptr) {
+    constexpr int inputs_size = 1;
+    constexpr int outputs_size = 1;
+    constexpr int tensors_size = inputs_size + outputs_size;
+    tensors[0] = *input_tensor;
+    tensors[1] = *output_tensor,
+    PopulateContext(tensors, tensors_size, micro_test::reporter, &context);
+    node.inputs = IntArrayFromInts(no_shape_inputs);
+    node.outputs = IntArrayFromInts(no_shape_outputs);
+  } else {
+    constexpr int inputs_size = 2;
+    constexpr int outputs_size = 1;
+    constexpr int tensors_size = inputs_size + outputs_size;
+    tensors[0] = *input_tensor;
+    tensors[1] = *shape_tensor;
+    tensors[2] = *output_tensor;
+    PopulateContext(tensors, tensors_size, micro_test::reporter, &context);
+    node.inputs = IntArrayFromInts(shape_inputs);
+    node.outputs = IntArrayFromInts(shape_outputs);
+  }
+
   ::tflite::AllOpsResolver resolver;
   const TfLiteRegistration* registration =
       resolver.FindOp(tflite::BuiltinOperator_RESHAPE);

@@ -76,7 +76,6 @@ void TestSplitTwoOutputsFloat(
   if (registration->init) {
     user_data = registration->init(&context, nullptr, 0);
   }
-
   int inputs_array_data[] = {2, 0, 1};
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {2, 2, 3};
@@ -179,7 +178,6 @@ void TestSplitFourOutputsFloat(
   if (registration->init) {
     user_data = registration->init(&context, nullptr, 0);
   }
-
   int inputs_array_data[] = {2, 0, 1};
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {4, 2, 3, 4, 5};
@@ -275,7 +273,6 @@ void TestSplitTwoOutputsQuantized(
   if (registration->init) {
     user_data = registration->init(&context, nullptr, 0);
   }
-
   int inputs_array_data[] = {2, 0, 1};
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {2, 2, 3};
