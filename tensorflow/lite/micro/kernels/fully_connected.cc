@@ -141,18 +141,18 @@ TfLiteStatus EvalQuantized(TfLiteContext* context, TfLiteNode* node,
   op_params.quantized_activation_min = data.output_activation_min;
   op_params.quantized_activation_max = data.output_activation_max;
 
-#define TF_LITE_FULLY_CONNECTED(output_data_type)                      \
-  reference_ops::FullyConnected(                                       \
+#define TF_LITE_FULLY_CONNECTED(func, output_data_type)                \
+  func(                                                                \
       op_params, GetTensorShape(input), GetTensorData<uint8_t>(input), \
       GetTensorShape(filter), GetTensorData<uint8_t>(filter),          \
       GetTensorShape(bias), GetTensorData<int32_t>(bias),              \
       GetTensorShape(output), GetTensorData<output_data_type>(output))
   switch (output->type) {
     case kTfLiteUInt8:
-      TF_LITE_FULLY_CONNECTED(uint8_t);
+      TF_LITE_FULLY_CONNECTED(reference_ops::FullyConnected, uint8_t);
       break;
     case kTfLiteInt16:
-      TF_LITE_FULLY_CONNECTED(int16_t);
+      TF_LITE_FULLY_CONNECTED(reference_ops::FullyConnected, int16_t);
       break;
     default:
       TF_LITE_KERNEL_LOG(context, "Type %s (%d) not supported.",

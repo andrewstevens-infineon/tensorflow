@@ -573,14 +573,14 @@ TF_LITE_MICRO_TEST(SimpleTestOptimizedFilterWidth) {
   uint8_t output_data[output_dims_count];
 
   TfLiteDepthwiseConvParams params = {
-        kTfLitePaddingValid,  /* Padding */
-        1,                    /* Stride Width */
-        1,                    /* Stride Height */
-        1,                    /* Depth Multiplier */
-        kTfLiteActNone,       /* Activation*/
-        1,                    /* Dilation Width*/
-        1                     /* Dilation Height */
-    };
+      kTfLitePaddingValid,  /* Padding */
+      1,                    /* Stride Width */
+      1,                    /* Stride Height */
+      1,                    /* Depth Multiplier */
+      kTfLiteActNone,       /* Activation*/
+      1,                    /* Dilation Width*/
+      1                     /* Dilation Height */
+  };
 
   tflite::testing::TestDepthwiseConvQuantizedPerLayer(
       input_shape, input_values, input_quantized, input_scale, input_zero_point,
@@ -758,14 +758,14 @@ TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannelDepthMultiplier1) {
   float scales[bias_elements + 1];
 
   static TfLiteDepthwiseConvParams depthwise_conv_params = {
-        kTfLitePaddingValid,  /* Padding */
-        1,                    /* Stride Width */
-        1,                    /* Stride Height */
-        1,                    /* Depth Multiplier */
-        kTfLiteActNone,       /* Activation*/
-        1,                    /* Dilation Width*/
-        1                     /* Dilation Height */
-    };
+      kTfLitePaddingValid,  /* Padding */
+      1,                    /* Stride Width */
+      1,                    /* Stride Height */
+      1,                    /* Depth Multiplier */
+      kTfLiteActNone,       /* Activation*/
+      1,                    /* Dilation Width*/
+      1                     /* Dilation Height */
+  };
 
   tflite::testing::TestDepthwiseConvQuantizedPerChannel(
       input_shape, input_values, input_quantized, input_scale, input_zero_point,
