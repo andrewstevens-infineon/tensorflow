@@ -27,5 +27,5 @@ const int kKeywordModellAdditionalOpTailAllocations = 1024;
 
 const int kTestConvModelTensorCount = 15;
 const int kTestConvModelHeadSize = 7744;
-const int kTestConvModelTailSize = 2256 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
+const int kTestConvModelTailSize = 2112 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
 const int kTestConvModelAdditionalOpTailAllocations = 1528;

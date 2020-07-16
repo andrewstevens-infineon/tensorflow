@@ -111,11 +111,6 @@ void TestMaxMinQuantized(
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {1, 2};
   TfLiteIntArray* outputs_array = IntArrayFromInts(outputs_array_data);
-<<<<<<< HEAD
-=======
-  int temporaries_array_data[] = {0};
-  TfLiteIntArray* temporaries_array = IntArrayFromInts(temporaries_array_data);
->>>>>>> 9826aee272... Infineon Major Test Improvements in tensorflow lite micro
 
   TfLiteNode node;
   node.inputs = inputs_array;
@@ -165,19 +160,10 @@ void TestMaxMinQuantizedInt32(
   const TfLiteRegistration* registration = resolver.FindOp(op);
   TF_LITE_MICRO_EXPECT_NE(nullptr, registration);
 
-<<<<<<< HEAD
   int inputs_array_data[] = {2, 0, 1};
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {1, 2};
   TfLiteIntArray* outputs_array = IntArrayFromInts(outputs_array_data);
-=======
-  auto inputs_array_data = {2, 0, 1};
-  TfLiteIntArray* inputs_array = IntArrayFromInitializer(inputs_array_data);
-  auto outputs_array_data = {1, 2};
-  TfLiteIntArray* outputs_array = IntArrayFromInitializer(outputs_array_data);
-  auto temporaries_array_data = {0};
-  TfLiteIntArray* temporaries_array = IntArrayFromInitializer(temporaries_array_data);
->>>>>>> 9826aee272... Infineon Major Test Improvements in tensorflow lite micro
 
   TfLiteNode node;
   node.inputs = inputs_array;

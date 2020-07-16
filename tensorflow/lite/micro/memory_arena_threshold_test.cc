@@ -11,6 +11,7 @@ limitations under the License.
 ==============================================================================*/
 
 #include <stdint.h>
+#include <iostream>
 
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/benchmarks/keyword_scrambled_model_data.h"
@@ -67,8 +68,12 @@ void EnsureAllocatedSizeThreshold(const char* allocation_type, size_t actual,
                                   size_t expected) {
   // TODO(b/158651472): Better auditing of non-64 bit systems:
   if (kIs64BitSystem) {
+      auto vx = (actual);                                                             \
+    auto vy = (expected);                                                             \
+    auto delta = ((vx) > (vy)) ? ((vx) - (vy)) : ((vy) - (vx));
+    std::cout << actual << "=" << expected << ": " << (delta > kAllocationThreshold* expected) << std::endl;
     // 64-bit systems should check floor and ceiling to catch memory savings:
-    TF_LITE_MICRO_EXPECT_NEAR(actual, expected, kAllocationThreshold);
+    TF_LITE_MICRO_EXPECT_NEAR(actual, expected, kAllocationThreshold * expected);
   } else {
     // Non-64 bit systems should just expect allocation does not exceed the
     // ceiling:
