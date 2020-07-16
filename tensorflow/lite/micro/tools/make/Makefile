@@ -148,6 +148,7 @@ $(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/benchmarks/*model_data.cc) \
 $(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/kernels/*.cc) \
 $(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/memory_planner/*.cc) \
 $(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/testing/*model.cc) \
+$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/testing/*_supp.cc) \
 $(TFLITE_U_PATH)tensorflow/lite/c/common.c \
 $(TFLITE_U_PATH)tensorflow/lite/core/api/error_reporter.cc \
 $(TFLITE_U_PATH)tensorflow/lite/core/api/flatbuffer_conversions.cc \
@@ -289,6 +290,9 @@ include $(wildcard $(MAKEFILE_DIR)/targets/*_makefile.inc)
 # Load dependencies for optimized kernel implementations.
 include $(wildcard $(MAKEFILE_DIR)/ext_libs/*.inc)
 
+CXXFLAGS += $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS)
+CCFLAGS  += $(LOCAL_CCFLAGS)  $(LOCAL_CPPFLAGS)
+
 # Call specialize here so that platform-specific tags can be taken into account.
 MICROLITE_CC_SRCS := $(call specialize,$(MICROLITE_CC_SRCS))
 
@@ -332,17 +336,17 @@ $(patsubst %.S,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(THIRD_PARTY_CC_SRCS)
 # For normal manually-created TensorFlow C++ source files.
 $(OBJDIR)%.o: %.cc $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
 
 # For normal manually-created TensorFlow C source files.
 $(OBJDIR)%.o: %.c $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
 
 # For normal manually-created TensorFlow ASM source files.
 $(OBJDIR)%.o: %.S $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
 
 # The target that's compiled if there's no command-line arguments.
 all: $(MICROLITE_LIB_PATH)
@@ -361,7 +365,7 @@ $(MICROLITE_LIB_PATH): $(TFLITE_U_PATH)tensorflow/lite/schema/schema_generated.h
 $(BINDIR)%_test : $(OBJDIR)%_test.o $(MICROLITE_LIB_PATH)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) \
-	-o $@ $< \
+	-o $@ $(abspath $<) \
 	$(LIBFLAGS) $(MICROLITE_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
 
 $(BINDIR)%.test_target: $(BINDIR)%_test generated_test_scripts
