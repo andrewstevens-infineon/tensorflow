@@ -265,8 +265,7 @@ TF_LITE_MICRO_TEST(InterpreterWithProfilerShouldProfileOps) {
   TF_LITE_MICRO_EXPECT_NE(nullptr, model);
 
   tflite::AllOpsResolver op_resolver = tflite::testing::GetOpResolver();
-
-  constexpr size_t allocator_buffer_size = 2048;
+  constexpr size_t allocator_buffer_size = 2048+256;
   uint8_t allocator_buffer[allocator_buffer_size];
   tflite::MockProfiler profiler;
   tflite::MicroInterpreter interpreter(model, op_resolver, allocator_buffer,
