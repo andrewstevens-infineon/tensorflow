@@ -285,7 +285,7 @@ TfLiteStatus EvalQuantized(TfLiteContext* context, TfLiteNode* node,
   return kTfLiteOk;
 }
 
-void EvalFloat(TfLiteFullyConnectedParams* params, const TfLiteTensor* input,
+TfLiteStatus EvalFloat(TfLiteFullyConnectedParams* params, const TfLiteTensor* input,
                const TfLiteTensor* weights, const TfLiteTensor* bias,
                TfLiteTensor* output) {
   float output_activation_min, output_activation_max;
@@ -299,6 +299,7 @@ void EvalFloat(TfLiteFullyConnectedParams* params, const TfLiteTensor* input,
       GetTensorShape(weights), GetTensorData<float>(weights),
       GetTensorShape(bias), GetTensorData<float>(bias), GetTensorShape(output),
       GetTensorData<float>(output));
+  return kTfLiteOk;
 }
 
 TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
@@ -349,13 +350,15 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
 
 }  // namespace fully_connected
 
-TfLiteRegistration* Register_FULLY_CONNECTED() {
-  static TfLiteRegistration r = {};
-  r.init = fully_connected::Init;
-  r.free = fully_connected::Free;
-  r.prepare = fully_connected::Prepare;
-  r.invoke = fully_connected::Eval;
-  return &r;
+TfLiteRegistration Register_FULLY_CONNECTED() {
+  return {/*init=*/fully_connected::Init,
+          /*free=*/fully_connected::Free,
+          /*prepare=*/fully_connected::Prepare,
+          /*invoke=*/fully_connected::Eval,
+          /*profiling_string=*/nullptr,
+          /*builtin_code=*/0,
+          /*custom_name=*/nullptr,
+          /*version=*/0};
 }
 
 }  // namespace micro
