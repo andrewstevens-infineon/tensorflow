@@ -1,8 +1,11 @@
 /* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
+
     http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -11,7 +14,6 @@ limitations under the License.
 ==============================================================================*/
 
 #include <stdint.h>
-#include <iostream>
 
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/benchmarks/keyword_scrambled_model_data.h"
@@ -68,12 +70,14 @@ void EnsureAllocatedSizeThreshold(const char* allocation_type, size_t actual,
                                   size_t expected) {
   // TODO(b/158651472): Better auditing of non-64 bit systems:
   if (kIs64BitSystem) {
-      auto vx = (actual);                                                             \
-    auto vy = (expected);                                                             \
-    auto delta = ((vx) > (vy)) ? ((vx) - (vy)) : ((vy) - (vx));
-    std::cout << actual << "=" << expected << ": " << (delta > kAllocationThreshold* expected) << std::endl;
     // 64-bit systems should check floor and ceiling to catch memory savings:
-    TF_LITE_MICRO_EXPECT_NEAR(actual, expected, kAllocationThreshold * expected);
+    TF_LITE_MICRO_EXPECT_NEAR(actual, expected,
+                              expected * kAllocationThreshold);
+    if (actual != expected) {
+      TF_LITE_REPORT_ERROR(micro_test::reporter,
+                           "%s threshold difference: %d != %d", allocation_type,
+                           actual, expected);
+    }
   } else {
     // Non-64 bit systems should just expect allocation does not exceed the
     // ceiling:
@@ -147,20 +151,7 @@ void ValidateModelAllocationThresholds(
 
 TF_LITE_MICRO_TESTS_BEGIN
 
-
 TF_LITE_MICRO_TEST(TestKeywordModelMemoryThreshold) {
-
-
-    TF_LITE_REPORT_ERROR(
-      micro_test::reporter,
-      "[TEST] TflIteTensorSize %d bytes",
-      (int)sizeof(TfLiteTensor));
-
-    TF_LITE_REPORT_ERROR(
-      micro_test::reporter,
-      "[TEST] TflIteTensorSize %d bytes",
-      (int)sizeof(TfLiteQuantization));
-
   tflite::AllOpsResolver all_ops_resolver;
   tflite::RecordingMicroInterpreter interpreter(
       tflite::GetModel(g_keyword_scrambled_model_data), all_ops_resolver,
