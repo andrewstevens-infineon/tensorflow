@@ -33,7 +33,7 @@ namespace testing {
 // USE WITH CARE!! Returns pointer to data member of argument
 // so this object's lifetime must outlive any access to its underlying
 // data via this pointer.
-// Pass-by lvalue ref of argument protects against simply programmer
+// Pass-by lvalue ref of argument protects against simple programmer
 // oops but is by no means foolproof.
 inline TfLiteIntArray* IntArrayFromInitializer(
     std::initializer_list<int> &int_initializer) {
@@ -65,17 +65,6 @@ inline int ZeroPointFromMinMax(const float min, const float max) {
   return static_cast<int>(std::numeric_limits<T>::min()) +
          static_cast<int>(-min / ScaleFromMinMax<T>(min, max) + 0.5f);
 }
-
-// Converts a quantized value to coded float
-float Q2F(int32_t code, float scale, float zero_point);
-
-// Converts a quantized value to coded float for quantization
-// params of specified tensor
-float Q2F(int32_t code, const TfLiteTensor *tensor);
-
-// Converts a float value into an unsigned eight-bit quantized value
-// for quantizations params of specified tensor 
-uint8_t F2Q(float value, const TfLiteTensor *tensor);
 
 // Converts a float value into an unsigned eight-bit quantized value.
 uint8_t F2Q(float value, float min, float max);
