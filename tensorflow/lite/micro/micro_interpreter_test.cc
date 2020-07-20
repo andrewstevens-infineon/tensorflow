@@ -25,9 +25,6 @@ limitations under the License.
 #include "tensorflow/lite/micro/test_helpers.h"
 #include "tensorflow/lite/micro/testing/micro_test.h"
 
-const bool kIs64BitSystem = sizeof(void*) == 8;
-
-
 namespace tflite {
 namespace {
 
@@ -265,7 +262,8 @@ TF_LITE_MICRO_TEST(InterpreterWithProfilerShouldProfileOps) {
   TF_LITE_MICRO_EXPECT_NE(nullptr, model);
 
   tflite::AllOpsResolver op_resolver = tflite::testing::GetOpResolver();
-  constexpr size_t allocator_buffer_size = 2048+256;
+
+  constexpr size_t allocator_buffer_size = 2048;
   uint8_t allocator_buffer[allocator_buffer_size];
   tflite::MockProfiler profiler;
   tflite::MicroInterpreter interpreter(model, op_resolver, allocator_buffer,
@@ -306,7 +304,7 @@ TF_LITE_MICRO_TEST(TestIncompleteInitializationAllocationsWithSmallArena) {
   TF_LITE_MICRO_EXPECT_EQ(interpreter.Invoke(), kTfLiteError);
 
   // Ensure allocations are zero (ignore tail since some internal structs are
-  // initialized with this space) as allocation
+  // initialized with this space):
   TF_LITE_MICRO_EXPECT_EQ(
       0, allocator->GetSimpleMemoryAllocator()->GetHeadUsedBytes());
   TF_LITE_MICRO_EXPECT_EQ(

@@ -86,11 +86,8 @@ TfLiteStatus ValidateConvGoldens(TfLiteTensor* tensors, int tensors_size,
   node.custom_initial_data_size = 0;
 
   if (registration->prepare) {
-    TfLiteStatus return_val = registration->prepare(&context, &node);
-    if (return_val != kTfLiteOk) {
-      return return_val;
+    TF_LITE_ENSURE_OK(context, registration->prepare(&context, &node));
     }
-  }
 
   // TODO(b/154240825): Use a test macro here which fails and returns.
   TF_LITE_MICRO_EXPECT_NE(nullptr, registration->invoke);
