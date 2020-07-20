@@ -2,10 +2,6 @@ ifneq (3.82,$(firstword $(sort $(MAKE_VERSION) 3.82)))
   $(error "Requires make version 3.82 or later (current is $(MAKE_VERSION))")
 endif
 
-here=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-# This is present only in installed copy and sets TFLITE_U_PATH 
--include $(here)/installed_settings.inc
-
 # root directory of tensorflow
 TENSORFLOW_ROOT :=
 MAKEFILE_DIR := tensorflow/lite/micro/tools/make
@@ -15,20 +11,6 @@ MAKEFILE_DIR := tensorflow/lite/micro/tools/make
 PARSE_THIRD_PARTY := 
 
 
-ifneq ($(TFLITE_U_PATH),)
-    TFLITE_INCLUDE := $(TFLITE_U_PATH)
-    MAKEFILE_DIR := $(TFLITE_U_PATH)tools/make
-    PROJECT_DIR := .
-    TESTING_DIR := $(TFLITE_U_PATH)tensorflow/lite/micro/testing
-    EXAMPLES_DIR :=
-else
-    TFLITE_INCLUDE := .
-    PROJECT_DIR :=  tensorflow/lite/micro
-    MAKEFILE_DIR := $(PROJECT_DIR)/tools/make
-    TESTING_DIR := $(PROJECT_DIR)/testing
-    EXAMPLES_DIR := tensorflow/lite/micro/examples/
-endif
-
 # Pull in some convenience functions.
 include $(MAKEFILE_DIR)/helper_functions.inc
 
@@ -36,7 +18,6 @@ include $(MAKEFILE_DIR)/helper_functions.inc
 HOST_OS :=
 ifeq ($(OS),Windows_NT)
 	HOST_OS = windows
-	portable_path=$(shell cygpath -m "$(1)")
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
@@ -45,7 +26,6 @@ else
 	ifeq ($(UNAME_S),Darwin)
 		HOST_OS := osx
 	endif
-	portable_path=$(1)
 endif
 
 # Determine the host architecture, with any ix86 architecture being labelled x86_32
@@ -68,14 +48,13 @@ ALL_TAGS := $(TAGS) $(TARGET)
 
 # This is obviously horrible.  We need to generate these 3 versions of the
 # include directories from one source.
-PORTABLE_MAKEFILE_DIR=$(call portable_path,$(MAKEFILE_DIR))
 INCLUDES := \
 -I. \
--I$(call portable_path,$(TFLITE_INCLUDE)) \
--I$(PORTABLE_MAKEFILE_DIR)/downloads/ \
--I$(PORTABLE_MAKEFILE_DIR)/downloads/gemmlowp \
--I$(PORTABLE_MAKEFILE_DIR)/downloads/flatbuffers/include \
--I$(PORTABLE_MAKEFILE_DIR)/downloads/ruy
+-I$(MAKEFILE_DIR)/downloads/ \
+-I$(MAKEFILE_DIR)/downloads/gemmlowp \
+-I$(MAKEFILE_DIR)/downloads/flatbuffers/include \
+-I$(MAKEFILE_DIR)/downloads/ruy
+
 # Same list of paths, but now relative to the generated project files.
 GENERATED_PROJECT_INCLUDES := \
 -I. \
@@ -91,7 +70,7 @@ third_party/gemmlowp \
 third_party/flatbuffers/include \
 third_party/ruy
 
-TEST_SCRIPT := $(TESTING_DIR)/test_linux_binary.sh
+TEST_SCRIPT := tensorflow/lite/micro/testing/test_linux_binary.sh
 
 MICROLITE_LIBS := -lm
 
@@ -109,15 +88,12 @@ TARGET_TOOLCHAIN_ROOT :=
 ifeq ($(BUILD_TYPE), debug)
 	CXXFLAGS += -DDEBUG -g
 	CCFLAGS  += -DDEBUG -g
-    BUILD_SUFFIX := _debug
 else ifeq ($(BUILD_TYPE), release)
 	CXXFLAGS += -DNDEBUG -O3 -DTF_LITE_STRIP_ERROR_STRINGS
 	CCFLAGS  += -DNDEBUG -O3 -DTF_LITE_STRIP_ERROR_STRINGS
-    BUILD_SUFFIX := _release
 else
 	CXXFLAGS += -DNDEBUG -O3
 	CCFLAGS  += -DNDEBUG -O3
-    BUILD_SUFFIX := 
 endif
 
 # This library is the main target for this makefile. It will contain a minimal
@@ -127,36 +103,36 @@ MICROLITE_LIB_NAME := libtensorflow-microlite.a
 # These two must be defined before we include the target specific Makefile.inc
 # because we filter out the examples that are not supported for those targets.
 # See targets/xtensa_xpg_makefile.inc for an example.
-MICRO_LITE_EXAMPLE_TESTS := $(shell find $(EXAMPLES_DIR) -name Makefile.inc)
-MICRO_LITE_BENCHMARKS := $(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/benchmarks/Makefile.inc)
+MICRO_LITE_EXAMPLE_TESTS := $(shell find tensorflow/lite/micro/examples/ -name Makefile.inc)
+MICRO_LITE_BENCHMARKS := $(wildcard tensorflow/lite/micro/benchmarks/Makefile.inc)
 
 MICROLITE_TEST_SRCS := \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/*test.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/kernels/*test.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/memory_planner/*test.cc)
+$(wildcard tensorflow/lite/micro/*test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/*test.cc) \
+$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
 
 # TODO(b/152645559): move all benchmarks to benchmarks directory.
 MICROLITE_BENCHMARK_SRCS := \
 $(wildcard tensorflow/lite/micro/benchmarks/*benchmark.cc)
 
 MICROLITE_TEST_HDRS := \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/testing/*.h)
+$(wildcard tensorflow/lite/micro/testing/*.h)
 
 MICROLITE_CC_BASE_SRCS := \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/*.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/benchmarks/*model_data.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/kernels/*.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/memory_planner/*.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/testing/*model.cc) \
-$(wildcard $(TFLITE_U_PATH)tensorflow/lite/micro/testing/*_supp.cc) \
-$(TFLITE_U_PATH)tensorflow/lite/c/common.c \
-$(TFLITE_U_PATH)tensorflow/lite/core/api/error_reporter.cc \
-$(TFLITE_U_PATH)tensorflow/lite/core/api/flatbuffer_conversions.cc \
-$(TFLITE_U_PATH)tensorflow/lite/core/api/op_resolver.cc \
-$(TFLITE_U_PATH)tensorflow/lite/core/api/tensor_utils.cc \
-$(TFLITE_U_PATH)tensorflow/lite/kernels/internal/quantization_util.cc \
-$(TFLITE_U_PATH)tensorflow/lite/kernels/kernel_util.cc \
-$(TFLITE_U_PATH)tensorflow/lite/micro/testing/test_utils.cc
+$(wildcard tensorflow/lite/micro/*.cc) \
+$(wildcard tensorflow/lite/micro/benchmarks/*model_data.cc) \
+$(wildcard tensorflow/lite/micro/kernels/*.cc) \
+$(wildcard tensorflow/lite/micro/memory_planner/*.cc) \
+$(wildcard tensorflow/lite/micro/testing/*model.cc) \
+$(wildcard tensorflow/lite/micro/testing/*_supp.cc) \
+tensorflow/lite/c/common.c \
+tensorflow/lite/core/api/error_reporter.cc \
+tensorflow/lite/core/api/flatbuffer_conversions.cc \
+tensorflow/lite/core/api/op_resolver.cc \
+tensorflow/lite/core/api/tensor_utils.cc \
+tensorflow/lite/kernels/internal/quantization_util.cc \
+tensorflow/lite/kernels/kernel_util.cc \
+tensorflow/lite/micro/testing/test_utils.cc
 
 MICROLITE_CC_SRCS := $(filter-out $(MICROLITE_TEST_SRCS), $(MICROLITE_CC_BASE_SRCS))
 MICROLITE_CC_SRCS := $(filter-out $(MICROLITE_BENCHMARK_SRCS), $(MICROLITE_CC_SRCS))
@@ -290,9 +266,6 @@ include $(wildcard $(MAKEFILE_DIR)/targets/*_makefile.inc)
 # Load dependencies for optimized kernel implementations.
 include $(wildcard $(MAKEFILE_DIR)/ext_libs/*.inc)
 
-CXXFLAGS += $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS)
-CCFLAGS  += $(LOCAL_CCFLAGS)  $(LOCAL_CPPFLAGS)
-
 # Call specialize here so that platform-specific tags can be taken into account.
 MICROLITE_CC_SRCS := $(call specialize,$(MICROLITE_CC_SRCS))
 
@@ -303,8 +276,7 @@ ALL_SRCS := \
 	$(MICROLITE_TEST_SRCS)
 
 # Where compiled objects are stored.
-
-GENDIR := $(PROJECT_DIR)/gen/$(TARGET)_$(TARGET_ARCH)$(BUILD_SUFFIX)/
+GENDIR := $(MAKEFILE_DIR)/gen/$(TARGET)_$(TARGET_ARCH)/
 OBJDIR := $(GENDIR)obj/
 BINDIR := $(GENDIR)bin/
 LIBDIR := $(GENDIR)lib/
@@ -323,7 +295,7 @@ include $(MICRO_LITE_EXAMPLE_TESTS)
 include $(MICRO_LITE_BENCHMARKS)
 
 # Create rules for downloading third-party dependencies.
-THIRD_PARTY_TARGETS +=
+THIRD_PARTY_TARGETS :=
 $(foreach DOWNLOAD,$(THIRD_PARTY_DOWNLOADS),$(eval $(call create_download_rule,$(DOWNLOAD))))
 third_party_downloads: $(THIRD_PARTY_TARGETS)
 
@@ -336,17 +308,17 @@ $(patsubst %.S,%.o,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(THIRD_PARTY_CC_SRCS)
 # For normal manually-created TensorFlow C++ source files.
 $(OBJDIR)%.o: %.cc $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # For normal manually-created TensorFlow C source files.
 $(OBJDIR)%.o: %.c $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 
 # For normal manually-created TensorFlow ASM source files.
 $(OBJDIR)%.o: %.S $(THIRD_PARTY_TARGETS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) $(INCLUDES) -c $(abspath $<) -o $@
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 
 # The target that's compiled if there's no command-line arguments.
 all: $(MICROLITE_LIB_PATH)
@@ -358,18 +330,18 @@ tensorflow/lite/schema/schema_generated.h:
 	@cp -u tensorflow/lite/schema/schema_generated.h.OPENSOURCE tensorflow/lite/schema/schema_generated.h
 
 # Gathers together all the objects we've compiled into a single '.a' archive.
-$(MICROLITE_LIB_PATH): $(TFLITE_U_PATH)tensorflow/lite/schema/schema_generated.h $(MICROLITE_LIB_OBJS)
+$(MICROLITE_LIB_PATH): tensorflow/lite/schema/schema_generated.h $(MICROLITE_LIB_OBJS)
 	@mkdir -p $(dir $@)
 	$(AR) $(ARFLAGS) $(MICROLITE_LIB_PATH) $(MICROLITE_LIB_OBJS)
 
 $(BINDIR)%_test : $(OBJDIR)%_test.o $(MICROLITE_LIB_PATH)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) \
-	-o $@ $(abspath $<) \
+	-o $@ $< \
 	$(LIBFLAGS) $(MICROLITE_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
 
-$(BINDIR)%.test_target: $(BINDIR)%_test generated_test_scripts
-	@test -f $(TEST_SCRIPT) || (echo 'Unable to find the test script $(TEST_SCRIPT). Is the software emulation available in $(TARGET)?'; exit 1)
+$(BINDIR)%.test_target: $(BINDIR)%_test
+	@test -f $(TEST_SCRIPT) || (echo 'Unable to find the test script. Is the software emulation available in $(TARGET)?'; exit 1)
 	$(TEST_SCRIPT) $< '~~~ALL TESTS PASSED~~~'
 
 # snease: Add %.bin rule here since BINDIR is now defined
@@ -391,7 +363,6 @@ test: $(MICROLITE_TEST_TARGETS)
 # Just build the test targets
 build: $(MICROLITE_BUILD_TARGETS)
 
-ifndef TFLITE_U_PATH
 generate_projects: $(ALL_PROJECT_TARGETS)
 
 generate_non_kernel_projects: $(filter-out generate_kernel%,$(ALL_PROJECT_TARGETS))
@@ -401,24 +372,13 @@ generate_non_test_projects: $(filter-out %_test%,$(ALL_PROJECT_TARGETS))
 generate_arduino_zip: generate_non_kernel_projects $(ARDUINO_LIBRARY_ZIPS)
 	python tensorflow/lite/micro/tools/make/merge_arduino_zips.py $(PRJDIR)/tensorflow_lite.zip $(ARDUINO_LIBRARY_ZIPS)
 
+# Gets rid of all generated files.
+clean:
+	rm -rf $(MAKEFILE_DIR)/gen
+
 # Removes third-party downloads.
 clean_downloads:
 	rm -rf $(MAKEFILE_DIR)/downloads
-
-
-TESTING_TEMPLS:=$(wildcard $(TESTING_DIR)/*.sh.tpl)
-GENERATED_TEST_SCRIPTS:=$(patsubst $(TESTING_DIR)/%.sh.tpl,$(MAKEFILE_DIR)/gen/%.sh,$(TESTING_TEMPLS))
-
-generated_test_scripts: $(GENERATED_TEST_SCRIPTS)
-else
-generated_test_scripts:
-endif
-
-
-# Gets rid of all generated files.
-clean:
-	rm -rf $(GENDIR)
-
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
