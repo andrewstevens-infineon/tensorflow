@@ -179,7 +179,6 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
     RuntimeShape filter_shape = GetTensorShape(filters);
     TFLITE_DCHECK_EQ(filter_shape.DimensionsCount(), 4);
 
-    const int input_depth = filter_shape.Dims(3);
     const int output_depth = filter_shape.Dims(0);
     TF_LITE_ENSURE(context, output_depth <= kMaxChannels);
 
@@ -217,7 +216,6 @@ void EvalQuantized(TfLiteContext* context, TfLiteNode* node,
                    const TfLiteTensor* input, const TfLiteTensor* filter,
                    const TfLiteTensor* bias, TfLiteTensor* im2col,
                    TfLiteTensor* hwcn_weights, TfLiteTensor* output) {
-  const int32 input_offset = -input->params.zero_point;
   const int32 filter_offset = -filter->params.zero_point;
   const int32 output_offset = output->params.zero_point;
 
@@ -408,8 +406,6 @@ void EvalQuantizedPerChannel(TfLiteContext* context, TfLiteNode* node,
                              const TfLiteTensor* filter,
                              const TfLiteTensor* bias, TfLiteTensor* output,
                              TfLiteTensor* im2col) {
-  const int32 input_offset = -input->params.zero_point;
-  const int32 filter_offset = 0;
   const int32 output_offset = output->params.zero_point;
 
   const RuntimeShape& input_shape = GetTensorShape(input);
@@ -505,7 +501,6 @@ void EvalQuantizedPerChannelWithPadding(TfLiteContext* context, TfLiteNode* node
                              const TfLiteTensor* bias, TfLiteTensor* output,
                              TfLiteTensor* im2col) {
   const int32 input_offset = -input->params.zero_point;
-  const int32 filter_offset = 0;
   const int32 output_offset = output->params.zero_point;
 
   const RuntimeShape& input_shape = GetTensorShape(input);

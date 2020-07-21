@@ -522,7 +522,6 @@ inline void DepthwiseConvNoPadding(
   const int depth_multiplier = params.depth_multiplier;
   const int32 output_activation_min = params.quantized_activation_min;
   const int32 output_activation_max = params.quantized_activation_max;
-  const int32 input_offset = params.input_offset;
   const int32 filter_offset = params.weights_offset;
   const int32 output_offset = params.output_offset;
   const int32 output_multiplier = params.output_multiplier;
@@ -748,7 +747,6 @@ void EvalQuantizedPerChannelNoPadding(
   const RuntimeShape& filter_shape = GetTensorShape(filter);
   const int8* filter_data = GetTensorData<int8>(filter);
   const RuntimeShape& bias_shape = GetTensorShape(bias);
-  const int32* bias_data = GetTensorData<int32>(bias);
   const RuntimeShape& output_shape = GetTensorShape(output);
   int8* output_data = GetTensorData<int8>(output);
 
@@ -760,7 +758,6 @@ void EvalQuantizedPerChannelNoPadding(
   TFLITE_DCHECK_EQ(dilation_height_factor, 1);
 
   const int depth_multiplier = params->depth_multiplier;
-  const int32 input_offset = -input->params.zero_point;
   const int32 output_offset = output->params.zero_point;
   const int32 output_activation_min = std::numeric_limits<int8_t>::min();
   const int32 output_activation_max = std::numeric_limits<int8_t>::max();
