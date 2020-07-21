@@ -163,9 +163,9 @@ void TestConvQuantizedPerLayer(
   // TODO(njeff): Affine Quantization Params should be set on tensor creation.
   float filter_scales[] = {1, filter_scale};
   int filter_zero_points[] = {1, 128};
-  TfLiteAffineQuantization filter_quant = {
-      FloatArrayFromFloats(filter_scales),
-      IntArrayFromInts(filter_zero_points)};
+  TfLiteAffineQuantization filter_quant = {FloatArrayFromFloats(filter_scales),
+                                           IntArrayFromInts(filter_zero_points),
+                                           0};
   tensors[1].quantization = {kTfLiteAffineQuantization, &filter_quant};
 
   TF_LITE_MICRO_EXPECT_EQ(
@@ -209,14 +209,15 @@ void TestConvQuantizedPerChannel(
   float input_scales[] = {1, input_scale};
   int input_zero_points[] = {1, input_zero_point};
   TfLiteAffineQuantization input_quant = {FloatArrayFromFloats(input_scales),
-                                          IntArrayFromInts(input_zero_points)};
+                                          IntArrayFromInts(input_zero_points),
+                                          0};
   input_tensor.quantization = {kTfLiteAffineQuantization, &input_quant};
 
   float output_scales[] = {1, output_scale};
   int output_zero_points[] = {1, output_zero_point};
-  TfLiteAffineQuantization output_quant = {
-      FloatArrayFromFloats(output_scales),
-      IntArrayFromInts(output_zero_points)};
+  TfLiteAffineQuantization output_quant = {FloatArrayFromFloats(output_scales),
+                                           IntArrayFromInts(output_zero_points),
+                                           0};
   output_tensor.quantization = {kTfLiteAffineQuantization, &output_quant};
 
   constexpr int inputs_size = 3;
@@ -423,27 +424,7 @@ TF_LITE_MICRO_TEST(SimpleTestQuantizedPaddingOffset) {
 }
 
 TF_LITE_MICRO_TEST(SimpleTestQuantizedValidPadding) {
-  TfLiteConvParams padding_conv_params = {
-      kTfLitePaddingSame,   // padding
-      2,                    // stride_width
-      2,                    // stride_height
-      kTfLiteActNone,       // activation
-      1,                    // dilation_width_factor
-      1,                    // dilation_height_factor
-  };
-
-  const int kInputElements = 9;
-  const int kInputShape[] = {4, 1, 3, 3, 1};
-  const float kInputData[] = {1, 1, 1, 2, 2, 2, 3, 3, 3};
-  const int kFilterElements = 4;
-  const int kFilterShape[] = {4, 1, 2, 2, 1};
-  const float kFilterData[] = {1, 1, 2, 2};
-  const int kBiasElements = 1;
-  const int kBiasShape[] = {1, 1};
-  const float kBiasData[] = {1};
-  const int kOutputShape[] = {4, 1, 1, 1, 1};
-  const float kGoldenData[] = {11};
-
+  
   const int output_dims_count = 1;
   uint8_t output_data[output_dims_count];
 
@@ -693,9 +674,6 @@ TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannelValidPadding) {
 }
 
 TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannelRelu6) {
-  // conv params:
-  // padding, stride_<width,height>, dilation_<width, height>, activation
-  TfLiteConvParams conv_params = {kTfLitePaddingValid, 1, 1, kTfLiteActRelu6};
   const int output_dims_count = 12;
   int8_t output_data[output_dims_count];
 
@@ -857,7 +835,7 @@ TF_LITE_MICRO_TEST(FilterDimsNotMatchingAffineQuantization) {
   int input_zero_points[] = {1, 128};
   TfLiteAffineQuantization input_quant = {
       tflite::testing::FloatArrayFromFloats(input_scales),
-      tflite::testing::IntArrayFromInts(input_zero_points)};
+      tflite::testing::IntArrayFromInts(input_zero_points), 0};
   input_tensor.quantization = {kTfLiteAffineQuantization, &input_quant};
 
   constexpr int inputs_size = 3;
@@ -925,7 +903,7 @@ TF_LITE_MICRO_TEST(BroadcastPerLayerQuantizationToPerChannelShouldMatchGolden) {
   float input_scales[2] = {1, input_scale};
   TfLiteAffineQuantization input_quant = {
       tflite::testing::FloatArrayFromFloats(input_scales),
-      tflite::testing::IntArrayFromInts(input_zero_points)};
+      tflite::testing::IntArrayFromInts(input_zero_points), 0};
   input_tensor.quantization = {kTfLiteAffineQuantization, &input_quant};
 
   // Create per-layer quantized int8 filter tensor.
@@ -936,7 +914,7 @@ TF_LITE_MICRO_TEST(BroadcastPerLayerQuantizationToPerChannelShouldMatchGolden) {
   float filter_scales[2] = {1, filter_scale};
   TfLiteAffineQuantization filter_quant = {
       tflite::testing::FloatArrayFromFloats(filter_scales),
-      tflite::testing::IntArrayFromInts(filter_zero_points)};
+      tflite::testing::IntArrayFromInts(filter_zero_points), 0};
   filter_tensor.quantization = {kTfLiteAffineQuantization, &filter_quant};
 
   // Create per-layer quantized int32 bias tensor.
@@ -950,7 +928,7 @@ TF_LITE_MICRO_TEST(BroadcastPerLayerQuantizationToPerChannelShouldMatchGolden) {
   float bias_scales[2] = {1, input_scale * filter_scale};
   TfLiteAffineQuantization bias_quant = {
       tflite::testing::FloatArrayFromFloats(bias_scales),
-      tflite::testing::IntArrayFromInts(bias_zero_points)};
+      tflite::testing::IntArrayFromInts(bias_zero_points), 0};
   bias_tensor.quantization = {kTfLiteAffineQuantization, &bias_quant};
 
   // Create per-layer quantized int8 output tensor.
@@ -960,7 +938,7 @@ TF_LITE_MICRO_TEST(BroadcastPerLayerQuantizationToPerChannelShouldMatchGolden) {
   float output_scales[2] = {1, output_scale};
   TfLiteAffineQuantization output_quant = {
       tflite::testing::FloatArrayFromFloats(output_scales),
-      tflite::testing::IntArrayFromInts(output_zero_points)};
+      tflite::testing::IntArrayFromInts(output_zero_points), 0};
   output_tensor.quantization = {kTfLiteAffineQuantization, &output_quant};
 
   constexpr int inputs_size = 3;
@@ -1049,7 +1027,7 @@ TF_LITE_MICRO_TEST(Int8Input32x1Filter32x32ShouldMatchGolden) {
   float input_scales[] = {1, input_scale};
   TfLiteAffineQuantization input_quant = {
       tflite::testing::FloatArrayFromFloats(input_scales),
-      tflite::testing::IntArrayFromInts(input_zero_points)};
+      tflite::testing::IntArrayFromInts(input_zero_points), 0};
   input_tensor.quantization = {kTfLiteAffineQuantization, &input_quant};
 
   // Create per-tensor quantized int8 filter tensor.
@@ -1062,7 +1040,7 @@ TF_LITE_MICRO_TEST(Int8Input32x1Filter32x32ShouldMatchGolden) {
   float filter_scales[] = {1, filter_scale};
   TfLiteAffineQuantization filter_quant = {
       tflite::testing::FloatArrayFromFloats(filter_scales),
-      tflite::testing::IntArrayFromInts(filter_zero_points)};
+      tflite::testing::IntArrayFromInts(filter_zero_points), 0};
   filter_tensor.quantization = {kTfLiteAffineQuantization, &filter_quant};
 
   // Create per-tensor quantized int32 bias tensor.
@@ -1078,7 +1056,7 @@ TF_LITE_MICRO_TEST(Int8Input32x1Filter32x32ShouldMatchGolden) {
   float bias_scales[] = {1, input_scale * filter_scale};
   TfLiteAffineQuantization bias_quant = {
       tflite::testing::FloatArrayFromFloats(bias_scales),
-      tflite::testing::IntArrayFromInts(bias_zero_points)};
+      tflite::testing::IntArrayFromInts(bias_zero_points), 0};
   bias_tensor.quantization = {kTfLiteAffineQuantization, &bias_quant};
 
   // Create per-tensor quantized int8 output tensor.
@@ -1090,7 +1068,7 @@ TF_LITE_MICRO_TEST(Int8Input32x1Filter32x32ShouldMatchGolden) {
   float output_scales[] = {1, output_scale};
   TfLiteAffineQuantization output_quant = {
       tflite::testing::FloatArrayFromFloats(output_scales),
-      tflite::testing::IntArrayFromInts(output_zero_points)};
+      tflite::testing::IntArrayFromInts(output_zero_points), 0};
   output_tensor.quantization = {kTfLiteAffineQuantization, &output_quant};
 
   // The 3 inputs include the input, filter and bias tensors.

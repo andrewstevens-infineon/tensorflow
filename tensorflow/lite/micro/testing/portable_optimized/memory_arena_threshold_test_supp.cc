@@ -26,10 +26,21 @@ limitations under the License.
 
 const int kKeywordModelTensorCount = 54;
 const int kKeywordModelHeadSize = 1008;  // Morfe scratch buffers in portable optimized version
-const int kKeywordModelTailSize = 14256 + sizeof(TfLiteTensor)*kKeywordModelTensorCount; // 20368;
+const int kKeywordModelTailSize = 14256 + sizeof(TfLiteTensor)*kKeywordModelTensorCount; 
+#ifdef TF_LITE_STATIC_MEMORY
+//const int kKeywordModelTailSize = 14256 + sizeof(TfLiteTensor)*kKeywordModelTensorCount; 
+const int kKeywordModelTailSize = 10400 + sizeof(TfLiteTensor)*kKeywordModelTensorCount;
+#else
+const int kKeywordModelTailSize = 10768 + sizeof(TfLiteTensor)*kKeywordModelTensorCount;
+#endif
 const int kKeywordModellAdditionalOpTailAllocations = 1200;
 
 const int kTestConvModelTensorCount = 15;
 const int kTestConvModelHeadSize = 7744;
-const int kTestConvModelTailSize = 2384 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;// WAS: 3936;
+#ifdef TF_LITE_STATIC_MEMORY
+//const int kTestConvModelTailSize = 2384 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
+const int kTestConvModelTailSize = 1056 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
+#else
+const int kTestConvModelTailSize = 1216 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;    
+#endif
 const int kTestConvModelAdditionalOpTailAllocations = 1200;
