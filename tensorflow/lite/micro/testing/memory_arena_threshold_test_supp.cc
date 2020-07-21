@@ -21,23 +21,21 @@ limitations under the License.
 // TODO(b/158651472): Consider auditing these values on non-64 bit systems.
 
 const int kKeywordModelTensorCount = 54;
-//const int kKeywordModelHeadSize = 1008;
-const int kKeywordModelHeadSize = 1008;
+const unsigned int TfLiteTensor_size_measured = 64u;
+const int kKeywordModelTensorCount = 54;
+const int kKeywordModelHeadSize = 672;
 #ifdef TF_LITE_STATIC_MEMORY
-//const int kKeywordModelTailSize = 13984 + sizeof(TfLiteTensor)*kKeywordModelTensorCount;
-const int kKeywordModelTailSize = 10128 + sizeof(TfLiteTensor)*kKeywordModelTensorCount;
+const int kKeywordModelTailSize = 13664+kKeywordModelTensorCount*(sizeof(TfLiteTensor)-TfLiteTensor_size_measured);
 #else
-const int kKeywordModelTailSize = 10496 + sizeof(TfLiteTensor)*kKeywordModelTensorCount;
+const int kKeywordModelTailSize = 14032+kKeywordModelTensorCount*(sizeof(TfLiteTensor)-TfLiteTensor_size_measured);
 #endif
-const int kKeywordModellAdditionalOpTailAllocations = 1024;
+const int kKeywordModellAdditionalOpTailAllocations = 1140;
 
 const int kTestConvModelTensorCount = 15;
-
 const int kTestConvModelHeadSize = 7744;
 #ifdef TF_LITE_STATIC_MEMORY
-//const int kTestConvModelTailSize = 2112 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
-const int kTestConvModelTailSize = 784 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;
+const int kTestConvModelTailSize = 1744+kTestConvModelTensorCount*(sizeof(TfLiteTensor)-TfLiteTensor_size_measured);
 #else
-const int kTestConvModelTailSize = 944 + sizeof(TfLiteTensor)*kTestConvModelTensorCount;    
+const int kTestConvModelTailSize = 1904+kTestConvModelTensorCount*(sizeof(TfLiteTensor)-TfLiteTensor_size_measured);    
 #endif
 const int kTestConvModelAdditionalOpTailAllocations = 1528;

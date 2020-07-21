@@ -329,9 +329,8 @@ TfLiteStatus AllocationInfoBuilder::AddScratchBuffers(
   // Set up allocation info for buffers.
   for (size_t i = tensor_count_; i < tensor_count_ + buffer_count_; ++i) {
     AllocationInfo* current = &info_[i];
-    size_t buf_i = i-tensor_count_;
     internal::ScratchBufferHandle* handle =
-        &(buffer_handles[buffer_count_-1-buf_i]);
+        &(buffer_handles[i - tensor_count_]);
     current->output_ptr = reinterpret_cast<void**>(&handle->data);
     current->bytes = handle->bytes;
     current->first_created = handle->node_idx;
@@ -682,16 +681,72 @@ TfLiteStatus MicroAllocator::FinishModelAllocation(
   return kTfLiteOk;
 }
 
+
 TfLiteStatus MicroAllocator::AllocatePersistentBuffer(size_t bytes,
                                                       void** ptr) {
-  uint8_t* data = memory_allocator_->AllocateFromTail(bytes, kBufferAlignment);
-  if (data == nullptr) {
-    TF_LITE_REPORT_ERROR(error_reporter_,
-                         "Failed to allocate persistent buffer of size %d",
-                         bytes);
-    return kTfLiteError;
+
+  // Table of ScratchBufferHandle "floats" at start of Tail during
+  // prepare phase to enable allocatino of both Scratch and Persistent buffers
+  uint8_t* data;
+  
+  if (scratch_buffer_handles_ != nullptr ) {
+
+    // Table of scratch buffer handles present... needs to be relocated.
+    if ( reinterpret_cast<uint8_t*>(scratch_buffer_handles_) !=
+          memory_allocator_->GetTail()) {
+      TF_LITE_REPORT_ERROR(error_reporter_,
+                         "Internal error: AllocateFromTail called directly"
+                         "between two RequestScratchBufferInArena calls.");
+       return kTfLiteError;
+     }
+
+     size_t sbh_table_size = scratch_buffer_count_ * sizeof(internal::ScratchBufferHandle);
+     internal::ScratchBufferHandle *relocated_sbh_table;
+
+     uint8_t* align_head;
+     // How much of scatch buffer can we pessimistically use when kBufferAlignment
+     // aligned.
+     if (sbh_table_size <= bytes) {
+      size_t additional_needed = bytes-sbh_table_size;
+      align_head = memory_allocator_->AllocateFromTail(additional_needed, kBufferAlignment);
+      data = align_head;
+      relocated_sbh_table = 
+        reinterpret_cast<internal::ScratchBufferHandle*>( 
+          memory_allocator_->AllocateFromTail(sbh_table_size, alignof(internal::ScratchBufferHandle)));
+     } else {
+       // Move head to ensure sufficient space under alignment constraint
+      align_head = memory_allocator_->AllocateFromTail(0, kBufferAlignment);
+      size_t unused_aligned_space = (sbh_table_size-bytes)/kBufferAlignment*kBufferAlignment;
+      data = align_head + unused_aligned_space;
+      relocated_sbh_table =  
+        reinterpret_cast<internal::ScratchBufferHandle*>( 
+          memory_allocator_->AllocateFromTail(sbh_table_size-unused_aligned_space,
+                                              alignof(internal::ScratchBufferHandle)));
+     }
+     // Check all allocation actually succeeded
+    if( align_head == 0 || relocated_sbh_table == 0 ) {
+          TF_LITE_REPORT_ERROR(error_reporter_,
+                          "Failed to allocate persistent buffer of size %d",
+                          bytes);
+      return kTfLiteError;
+    }
+     // Relocate scratch buffer table - we're copying from low addr to high
+     // to lower address so overlapping ranges o.k.
+     std::copy(scratch_buffer_handles_, scratch_buffer_handles_+scratch_buffer_count_, relocated_sbh_table);
+     scratch_buffer_handles_ = relocated_sbh_table;
+  } else {
+
+    // No table of scratch buffer handles.  Can allocate space directly from tail
+    data = memory_allocator_->AllocateFromTail(bytes, kBufferAlignment);
+    if (data == nullptr) {
+      TF_LITE_REPORT_ERROR(error_reporter_,
+                          "Failed to allocate persistent buffer of size %d",
+                          bytes);
+      return kTfLiteError;
+    }
   }
   (*ptr) = data;
+
   return kTfLiteOk;
 }
 
@@ -701,37 +756,34 @@ TfLiteStatus MicroAllocator::RequestScratchBufferInArena(int node_id,
   // A sanity check to make sure scratch_buffer_handles_ is contiguous i.e.
   // scratch_buffer_handles_ is pointing to the last allocation from memory
   // allocator.
-
-
-  internal::ScratchBufferHandle* handle =
-        reinterpret_cast<internal::ScratchBufferHandle*>(
-            memory_allocator_->AllocateFromHead(
-                sizeof(internal::ScratchBufferHandle),
-                alignof(internal::ScratchBufferHandle)));
-  
-  if (handle == nullptr) {
+  if (scratch_buffer_handles_ != nullptr &&
+      reinterpret_cast<uint8_t*>(scratch_buffer_handles_) !=
+          memory_allocator_->GetTail()) {
     TF_LITE_REPORT_ERROR(error_reporter_,
-                        "Failed to register scratch buffer handle for node %s",
-                        node_id);
+                         "Internal error: AllocateFromTail can not be called directly"
+                         "between two RequestScratchBufferInArena calls.");
     return kTfLiteError;
   }
 
-  if (scratch_buffer_handles_begin_ != nullptr) {
-    auto next_contiguous = scratch_buffer_handles_begin_+scratch_buffer_count_;
-    if (next_contiguous != handle) {
-            TF_LITE_REPORT_ERROR(error_reporter_,
-                         "Internal error: AllocateFromHead can not be called "
-                         "between two RequestScratchBufferInArena calls.");
-    }
-  } else {
-    scratch_buffer_handles_begin_ = handle;
+  internal::ScratchBufferHandle* handle =
+      reinterpret_cast<internal::ScratchBufferHandle*>(
+          memory_allocator_->AllocateFromTail(
+              sizeof(internal::ScratchBufferHandle),
+              alignof(internal::ScratchBufferHandle)));
+  if (handle == nullptr) {
+    TF_LITE_REPORT_ERROR(error_reporter_,
+                         "Failed to register scratch buffer handle for node %s",
+                         node_id);
+    return kTfLiteError;
   }
-
   *handle = {};
   handle->bytes = bytes;
   handle->node_idx = node_id;
   *buffer_idx = scratch_buffer_count_;
   scratch_buffer_count_ += 1;
+  // scratch_buffer_handles_ is in reverse order. The following code ensures
+  // that scratch_buffers[0] is pointing to the newly allocated handle.
+  scratch_buffer_handles_ = handle;
   return kTfLiteOk;
 }
 
@@ -743,7 +795,7 @@ void* MicroAllocator::GetScratchBuffer(int buffer_idx) const {
     return nullptr;
   }
   // scratch_buffer_handles_ is in reverse order.
-  return scratch_buffer_handles_begin_[buffer_idx].data;
+  return scratch_buffer_handles_[scratch_buffer_count_ - buffer_idx - 1].data;
 }
 
 size_t MicroAllocator::used_bytes() const {
@@ -1044,7 +1096,7 @@ TfLiteStatus MicroAllocator::CommitStaticMemoryPlan(
     TF_LITE_ENSURE_STATUS(
         builder.AddTensors(subgraph, offline_planner_offsets, eval_tensors));
 
-    TF_LITE_ENSURE_STATUS(builder.AddScratchBuffers(scratch_buffer_handles_begin_));
+    TF_LITE_ENSURE_STATUS(builder.AddScratchBuffers(scratch_buffer_handles_));
     const AllocationInfo* allocation_info = builder.Finish();
 
     // Remaining arena size that memory planner can use for calculating offsets.

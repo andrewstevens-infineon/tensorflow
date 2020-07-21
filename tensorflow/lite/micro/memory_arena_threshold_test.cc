@@ -34,7 +34,7 @@ namespace {
 constexpr float kAllocationThreshold = 0.03;
 const bool kIs64BitSystem = sizeof(void*) == 8;
 
-constexpr int kKeywordModelTensorArenaSize = 22 * 1024;
+constexpr int kKeywordModelTensorArenaSize = 24 * 1024;
 uint8_t keyword_model_tensor_arena[kKeywordModelTensorArenaSize];
 
 constexpr int kKeywordModelNodeAndRegistrationCount = 15;
@@ -72,8 +72,8 @@ void EnsureAllocatedSizeThreshold(const char* allocation_type, size_t actual,
                               expected * kAllocationThreshold);
     if (actual != expected) {
       TF_LITE_REPORT_ERROR(micro_test::reporter,
-                           "%s threshold difference: %d != %d", allocation_type,
-                           actual, expected);
+                           "%s threshold difference: %d != %d %d", allocation_type,
+                           actual, expected, sizeof(TfLiteTensor));
     }
   } else {
     // Non-64 bit systems should just expect allocation does not exceed the
@@ -146,6 +146,9 @@ void ValidateModelAllocationThresholds(
                                thresholds.node_and_registration_count +
                            thresholds.op_runtime_data_size;
 
+      TF_LITE_REPORT_ERROR(micro_test::reporter,
+                           "tail used %d tail est %d additional %d", 
+                           tail_used_bytes, tail_est_length, additional_tail_allocations);
   TF_LITE_MICRO_EXPECT_LE((int)(tail_used_bytes - tail_est_length),
                           additional_tail_allocations);
 }
