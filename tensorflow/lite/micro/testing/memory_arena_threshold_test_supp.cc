@@ -22,7 +22,6 @@ limitations under the License.
 
 const int kKeywordModelTensorCount = 54;
 const unsigned int TfLiteTensor_size_measured = 64u;
-const int kKeywordModelTensorCount = 54;
 const int kKeywordModelHeadSize = 672;
 #ifdef TF_LITE_STATIC_MEMORY
 const int kKeywordModelTailSize = 13664+kKeywordModelTensorCount*(sizeof(TfLiteTensor)-TfLiteTensor_size_measured);
