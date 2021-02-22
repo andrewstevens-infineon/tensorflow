@@ -72,7 +72,7 @@ TF_LITE_MICRO_TEST(SimpleTestFloat) {
           tflite::testing::kBiasShape, tflite::testing::kBiasData,
           tflite::testing::kOutputShape, tflite::testing::kGoldenData,
           &tflite::testing::common_conv_params,
-          tflite::Register_TRANSPOSE_CONV_2D(), output_data));
+          output_data, tflite::Register_TRANSPOSE_CONV_2D()));
 }
 
 TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannel) {
@@ -101,7 +101,7 @@ TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannel) {
           tflite::testing::kOutputShape, tflite::testing::kGoldenData,
           golden_quantized, output_scale, output_zero_point,
           &tflite::testing::common_conv_params,
-          tflite::Register_TRANSPOSE_CONV_2D(), output_data));
+          output_data, tflite::Register_TRANSPOSE_CONV_2D()));
 }
 
 TF_LITE_MICRO_TEST(InputOutputDifferentTypeIsError) {
@@ -130,7 +130,7 @@ TF_LITE_MICRO_TEST(InputOutputDifferentTypeIsError) {
       kTfLiteError, tflite::testing::InvokeConv(
                         tensors, tensors_size, output_dims_count,
                         &tflite::testing::common_conv_params,
-                        tflite::Register_TRANSPOSE_CONV_2D(), output_data));
+                        output_data, tflite::Register_TRANSPOSE_CONV_2D()));
 }
 
 TF_LITE_MICRO_TEST(HybridModeIsError) {
@@ -161,7 +161,7 @@ TF_LITE_MICRO_TEST(HybridModeIsError) {
       kTfLiteError, tflite::testing::InvokeConv(
                         tensors, tensors_size, output_dims_count,
                         &tflite::testing::common_conv_params,
-                        tflite::Register_TRANSPOSE_CONV_2D(), output_data));
+                        output_data, tflite::Register_TRANSPOSE_CONV_2D()));
 }
 
 TF_LITE_MICRO_TESTS_END
