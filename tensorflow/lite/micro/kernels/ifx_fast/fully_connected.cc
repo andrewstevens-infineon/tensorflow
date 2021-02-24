@@ -26,7 +26,6 @@ phase to reduce runtime and memory overhead.
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
 #include "tensorflow/lite/kernels/kernel_util.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/target_specific.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_core.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_impl.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_op_data.h"

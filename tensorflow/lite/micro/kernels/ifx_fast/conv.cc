@@ -22,7 +22,6 @@ phase to reduce runtime and memory overhead.
 ==============================================================================*/
 
 #include "tensorflow/lite/kernels/internal/reference/integer_ops/conv.h"
-
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/kernels/internal/common.h"
@@ -33,7 +32,6 @@ phase to reduce runtime and memory overhead.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 // EVAL functions are located in these files
-#include "tensorflow/lite/micro/kernels/ifx_fast/target_specific.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/conv/conv_impl.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/conv/conv_op_data.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/conv/conv_ops_int8.h"
