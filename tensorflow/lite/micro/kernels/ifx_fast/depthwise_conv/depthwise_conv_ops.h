@@ -26,7 +26,6 @@ limitations under the License.
 #include "tensorflow/lite/kernels/internal/types.h"
 #include "tensorflow/lite/kernels/kernel_util.h"
 #include "tensorflow/lite/micro/kernels/ifx_fast/depthwise_conv/depthwise_conv_op_data.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/target_specific.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {

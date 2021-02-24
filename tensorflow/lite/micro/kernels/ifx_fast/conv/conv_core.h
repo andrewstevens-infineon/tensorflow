@@ -62,7 +62,7 @@ class ConvKernelCore<uint8_t, PADDING_TRAIT> {
                 out_y * params.stride_height - params.padding_values.height;
             uint32_t offset_filter0 = out_channel * fi_dims[1];
 
-            LayerOps::reset_acc(&acc);
+            acc = 0;
 
             const int32_t ker_y_start = std::max(0, -in_y_origin);
             const int32_t ker_x_start = std::max(0, -in_x_origin);
@@ -89,11 +89,10 @@ class ConvKernelCore<uint8_t, PADDING_TRAIT> {
                   int32_t filter_val = filter[offset_filter2 + in_channel] +
                                        params.weights_offset;
 
-                  LayerOps::accumulate(&acc, filter_val, input_val);
+                  acc += filter_val * input_val;
                 }
               }
             }
-            acc = LayerOps::get_acc(&acc);
             acc += sum_of_filters[out_channel];
             acc = MultiplyByQuantizedMultiplier(acc, params.output_multiplier,
                                                 params.output_shift);
@@ -147,7 +146,7 @@ class ConvKernelCore<int8_t, PADDING_TRAIT> {
             const int32_t ker_x_end = std::min(
                 filter_shape.Dims(2), input_shape.Dims(2) - in_x_origin);
 
-            LayerOps::reset_acc(&acc);
+            acc = 0;
 
             for (int filter_y = ker_y_start; filter_y < ker_y_end; ++filter_y) {
               const int in_y = in_y_origin + filter_y;
@@ -168,11 +167,10 @@ class ConvKernelCore<int8_t, PADDING_TRAIT> {
                       input[offset_input2 + in_channel]);
                   int32_t filter_val = filter[offset_filter2 + in_channel];
 
-                  LayerOps::accumulate(&acc, filter_val, input_val);
+                  acc +=filter_val * input_val;
                 }
               }
             }
-            acc = LayerOps::get_acc(&acc);
             acc += sum_of_filters[out_channel];
             acc = MultiplyByQuantizedMultiplier(
                 acc, per_channel_multiplier[out_channel],
@@ -225,7 +223,6 @@ TfLiteStatus EvalConvWithPadding(TfLiteConvParams* params, OpData* data,
   T* output_data = tflite::micro::GetTensorData<T>(output);
 
   ConvParams op_params;
-  op_params.padding_type = RuntimePaddingType(params->padding);
   op_params.padding_values.width = data->padding.width;
   op_params.padding_values.height = data->padding.height;
   op_params.padding_values.width_offset = data->padding.width_offset;
@@ -271,7 +268,6 @@ TfLiteStatus EvalConvWithoutPadding(TfLiteConvParams* params, OpData* data,
   T* output_data = tflite::micro::GetTensorData<T>(output);
 
   ConvParams op_params;
-  op_params.padding_type = RuntimePaddingType(params->padding);
   op_params.padding_values.width = data->padding.width;
   op_params.padding_values.height = data->padding.height;
   op_params.padding_values.width_offset = data->padding.width_offset;

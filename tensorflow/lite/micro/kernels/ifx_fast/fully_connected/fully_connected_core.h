@@ -44,12 +44,11 @@ class KernelCore<uint8_t> {
     int32_t acc;
     for (int out_c = 0; out_c < output_depth; out_c++) {
       // Multiply and accumulate inputs and weights
-      LayerOps::reset_acc(&acc, *sum_of_weights_factor + sum_of_inputs_factor);
+      acc = *sum_of_weights_factor + sum_of_inputs_factor;
       for (int d = 0; d < accum_depth; ++d) {
-        LayerOps::accumulate(&acc, weights[d], input[d]);
+        acc += weights[d] * input[d];
       }
       // Re-quantize and clamp
-      acc = LayerOps::get_acc(&acc);
       acc = MultiplyByQuantizedMultiplier(acc, output_multiplier, output_shift);
       acc += output_offset;
       acc = ActivationFunctionWithMinMax(acc, activation_min, activation_max);
@@ -75,12 +74,11 @@ class KernelCore<int8_t> {
     int32_t acc;
     for (int out_c = 0; out_c < output_depth; out_c++) {
       // Multiply and accumulate inputs and weights
-      LayerOps::reset_acc(&acc, *sum_of_weights_factor + sum_of_inputs_factor);
+      acc = *sum_of_weights_factor + sum_of_inputs_factor;
 
       for (int d = 0; d < accum_depth; ++d) {
-        LayerOps::accumulate(&acc, weights[d], input[d]);
+        acc += weights[d] * input[d];
       }
-      acc = LayerOps::get_acc(&acc);
       // Re-quantize and clamp
       acc = MultiplyByQuantizedMultiplier(acc, output_multiplier, output_shift);
       acc += output_offset;
