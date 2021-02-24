@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_CONV_CONV_OPS_REF_H_
-#define TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_CONV_CONV_OPS_REF_H_
+#ifndef TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OPS_REF_H_
+#define TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OPS_REF_H_
 
 #include "tensorflow/lite/kernels/internal/reference/conv.h"
 
@@ -150,4 +150,4 @@ TfLiteStatus EvalConvFloat(TfLiteConvParams* params, OpData* data,
 }  // namespace ops
 }  // namespace tflite
 
-#endif /* TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_CONV_CONV_OPS_REF_H_ */
+#endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OPS_REF_H_ */

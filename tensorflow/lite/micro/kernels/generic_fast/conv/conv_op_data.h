@@ -13,35 +13,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_DEPTHWISE_CONV_OP_DATA_H_
-#define TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_DEPTHWISE_CONV_OP_DATA_H_
+#ifndef TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OP_DATA_H_
+#define TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OP_DATA_H_
 
-#include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/c/common.h"
 
 namespace tflite {
 namespace ops {
 namespace micro {
-namespace depthwise_conv {
+namespace conv {
 
 struct OpData;
 
-#define EVAL_FUNC_DECL(name)                                               \
-  TfLiteStatus name(TfLiteContext* context,                                \
-                    const TfLiteDepthwiseConvParams& params, OpData* data, \
-                    const TfLiteEvalTensor* input,                         \
-                    const TfLiteEvalTensor* filter,                        \
-                    const TfLiteEvalTensor* bias, TfLiteEvalTensor* output);
+#define EVAL_FUNC_DECL(name)                                                 \
+  TfLiteStatus name(                                                         \
+      TfLiteConvParams* params, OpData* data, const TfLiteEvalTensor* input, \
+      const TfLiteEvalTensor* filter, const TfLiteEvalTensor* bias,          \
+      TfLiteEvalTensor* output, TfLiteContext* context)
 
 typedef EVAL_FUNC_DECL((*EvalVariantFptr));
 
-EVAL_FUNC_DECL(EvalFloat);
-EVAL_FUNC_DECL(EvalInt8Reference);
-EVAL_FUNC_DECL(EvalInt8Padding);
-EVAL_FUNC_DECL(EvalInt8);
-EVAL_FUNC_DECL(EvalUInt8Reference);
-EVAL_FUNC_DECL(EvalUInt8Padding);
-EVAL_FUNC_DECL(EvalUInt8);
+EVAL_FUNC_DECL(EvalConvUInt8);
+EVAL_FUNC_DECL(EvalConvInt8);
+EVAL_FUNC_DECL(EvalConvFloat);
+EVAL_FUNC_DECL(EvalConvInt8Reference);
+EVAL_FUNC_DECL(EvalConvUInt8Reference);
 
 #undef EVAL_FUNC_DECL
 
@@ -70,16 +66,13 @@ struct OpData {
   // The precomputed sum of filters factor
   int32_t* sum_of_filters_factor;
 
-  // The buffer for accumulation
-  int32_t* acc_buf;
-
   // Eval function pointer
   EvalVariantFptr eval_function;
 };
 
-}  // namespace depthwise_conv
+}  // namespace conv
 }  // namespace micro
 }  // namespace ops
 }  // namespace tflite
 
-#endif  // TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_DEPTHWISE_CONV_OP_DATA_H_
+#endif  // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OP_DATA_H_

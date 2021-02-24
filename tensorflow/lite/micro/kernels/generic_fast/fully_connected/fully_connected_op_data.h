@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_
-#define TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_
+#ifndef TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_
+#define TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_
 
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/c/common.h"
@@ -66,4 +66,4 @@ struct OpData {
 }  // namespace ops
 }  // namespace tflite
 
-#endif  // TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_
+#endif  // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_

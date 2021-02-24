@@ -14,7 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 /*
-IFX FAST
+GENERIC FAST
 This optimized kernel directory contains optimized kernels.
 The kernels are portable to every hardware, no custom instructions are used.
 The kernels take advantage of precomputations, smaller tweaks and the prepare
@@ -30,9 +30,9 @@ phase to reduce runtime and memory overhead.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 // EVAL functions are located in these files
-#include "tensorflow/lite/micro/kernels/ifx_fast/depthwise_conv/depthwise_conv_impl.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/depthwise_conv/depthwise_conv_op_data.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/depthwise_conv/depthwise_conv_ops.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/depthwise_conv/depthwise_conv_impl.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/depthwise_conv/depthwise_conv_op_data.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/depthwise_conv/depthwise_conv_ops.h"
 
 namespace tflite {
 namespace ops {

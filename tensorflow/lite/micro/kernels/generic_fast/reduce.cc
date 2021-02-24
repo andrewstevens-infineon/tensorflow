@@ -14,7 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 /*
-IFX FAST
+GENERIC FAST
 This optimized kernel directory contains optimized kernels.
 The kernels are portable to every hardware, no custom instructions are used.
 The kernels take advantage of precomputations, smaller tweaks and the prepare
@@ -22,7 +22,7 @@ phase to reduce runtime and memory overhead.
 ==============================================================================*/
 
 #include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/reduce/reduce_impl.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/reduce/reduce_impl.h"
 
 namespace tflite {
 namespace ops {

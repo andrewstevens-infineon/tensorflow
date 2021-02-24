@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_
-#define TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_
+#ifndef TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_
+#define TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_
 
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/kernels/internal/common.h"
@@ -25,7 +25,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
 #include "tensorflow/lite/kernels/internal/types.h"
 #include "tensorflow/lite/kernels/kernel_util.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_op_data.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/fully_connected/fully_connected_op_data.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
@@ -151,5 +151,4 @@ TfLiteStatus EvalFloat(TfLiteContext* context,
 }  // namespace ops
 }  // namespace tflite
 
-#endif /* TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_ \
-        */
+#endif // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_

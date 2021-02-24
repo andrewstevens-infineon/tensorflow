@@ -14,7 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 /*
-IFX FAST
+GENERIC FAST
 This optimized kernel directory contains optimized kernels.
 The kernels are portable to every hardware, no custom instructions are used.
 The kernels take advantage of precomputations, smaller tweaks and the prepare
@@ -26,10 +26,10 @@ phase to reduce runtime and memory overhead.
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
 #include "tensorflow/lite/kernels/kernel_util.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_core.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_impl.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_op_data.h"
-#include "tensorflow/lite/micro/kernels/ifx_fast/fully_connected/fully_connected_ops.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/fully_connected/fully_connected_core.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/fully_connected/fully_connected_impl.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/fully_connected/fully_connected_op_data.h"
+#include "tensorflow/lite/micro/kernels/generic_fast/fully_connected/fully_connected_ops.h"
 
 
 namespace tflite {

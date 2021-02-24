@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_
-#define TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_
+#ifndef TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_
+#define TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_
 
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/kernels/internal/common.h"
@@ -97,5 +97,4 @@ class KernelCore<int8_t> {
 }  // namespace ops
 }  // namespace tflite
 
-#endif /* TENSORFLOW_LITE_MICRO_KERNELS_IFX_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_ \
-        */
+#endif // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_CORE_H_
