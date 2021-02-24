@@ -29,9 +29,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace fully_connected {
+namespace {
 
 template <typename T>
 TfLiteStatus EvalQuantized(TfLiteContext* context,
@@ -146,9 +144,7 @@ TfLiteStatus EvalFloat(TfLiteContext* context,
   return kTfLiteOk;
 }
 
-}  // namespace fully_connected
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OPS_H_

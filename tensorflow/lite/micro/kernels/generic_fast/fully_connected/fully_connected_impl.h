@@ -26,9 +26,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace fully_connected {
+namespace {
 
 constexpr int kInputTensor = 0;
 constexpr int kWeightsTensor = 1;
@@ -112,9 +110,7 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
                                output);
 }
 
-}  // namespace fully_connected
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_IMPL_H_

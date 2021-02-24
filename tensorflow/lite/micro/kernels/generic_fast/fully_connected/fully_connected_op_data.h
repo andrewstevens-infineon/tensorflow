@@ -20,9 +20,7 @@ limitations under the License.
 #include "tensorflow/lite/c/common.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace fully_connected {
+namespace {
 
 struct OpData;
 
@@ -61,9 +59,7 @@ struct OpData {
   EvalVariantFptr eval_function;
 };
 
-}  // namespace fully_connected
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif  // TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_FULLY_CONNECTED_FULLY_CONNECTED_OP_DATA_H_

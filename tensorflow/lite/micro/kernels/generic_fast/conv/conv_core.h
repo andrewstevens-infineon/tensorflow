@@ -25,9 +25,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace conv {
+namespace {
 
 template <typename T, class PADDING_TRAIT>
 class ConvKernelCore;
@@ -297,9 +295,7 @@ TfLiteStatus EvalConvWithoutPadding(TfLiteConvParams* params, OpData* data,
   return kTfLiteOk;
 }
 
-}  // namespace conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_CORE_H_ */

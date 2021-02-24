@@ -33,9 +33,7 @@ phase to reduce runtime and memory overhead.
 
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace fully_connected {
+namespace {
 
 /*
  * Prepare function. This function is only run once before the invocations
@@ -116,15 +114,13 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
   return kTfLiteOk;
 }
 
-}  // namespace fully_connected
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 
 TfLiteRegistration Register_FULLY_CONNECTED() {
-  return {/*init=*/ops::micro::fully_connected::Init,
-          /*free=*/ops::micro::fully_connected::Free,
-          /*prepare=*/ops::micro::fully_connected::Prepare,
-          /*invoke=*/ops::micro::fully_connected::Eval,
+  return {/*init=*/Init,
+          /*free=*/Free,
+          /*prepare=*/Prepare,
+          /*invoke=*/Eval,
           /*profiling_string=*/nullptr,
           /*builtin_code=*/0,
           /*custom_name=*/nullptr,

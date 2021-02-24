@@ -40,9 +40,7 @@ phase to reduce runtime and memory overhead.
 
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace conv {
+namespace {
 
 /*
  * Prepare function. This function is only run once before the invocations
@@ -182,15 +180,13 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
   return kTfLiteOk;
 }
 
-}  // namespace conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 
 TfLiteRegistration Register_CONV_2D() {
-  return {/*init=*/ops::micro::conv::Init,
-          /*free=*/ops::micro::conv::Free,
-          /*prepare=*/ops::micro::conv::Prepare,
-          /*invoke=*/ops::micro::conv::Eval,
+  return {/*init=*/Init,
+          /*free=*/Free,
+          /*prepare=*/Prepare,
+          /*invoke=*/Eval,
           /*profiling_string=*/nullptr,
           /*builtin_code=*/0,
           /*custom_name=*/nullptr,

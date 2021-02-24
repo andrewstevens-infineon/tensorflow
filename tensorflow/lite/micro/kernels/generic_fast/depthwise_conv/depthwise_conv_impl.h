@@ -26,9 +26,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace depthwise_conv {
+namespace {
 
 constexpr int kInputTensor = 0;
 constexpr int kFilterTensor = 1;
@@ -154,9 +152,7 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
                              output);
 }
 
-}  // namespace depthwise_conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_DEPTHWISE_CONV_DEPTHWISE_CONV_IMPL_H_ \
