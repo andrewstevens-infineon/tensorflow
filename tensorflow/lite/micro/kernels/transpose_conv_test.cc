@@ -189,8 +189,7 @@ TF_LITE_MICRO_TEST(SimpleTestFloat) {
           tflite::testing::kFilterShape, tflite::testing::kFilterData,
           tflite::testing::kBiasShape, tflite::testing::kBiasData,
           tflite::testing::kOutputShape, tflite::testing::kGoldenData,
-          &tflite::testing::common_conv_params,
-          output_data, tflite::Register_TRANSPOSE_CONV_2D()));
+          &tflite::testing::common_conv_params, output_data));
 }
 
 TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannel) {
@@ -219,12 +218,7 @@ TF_LITE_MICRO_TEST(SimpleTestQuantizedPerChannel) {
           tflite::testing::kBiasData, bias_quantized, scales, zero_points,
           tflite::testing::kOutputShape, tflite::testing::kGoldenData,
           golden_quantized, output_scale, output_zero_point,
-<<<<<<< HEAD
           &tflite::testing::common_conv_params, output_data));
-=======
-          &tflite::testing::common_conv_params,
-          output_data, tflite::Register_TRANSPOSE_CONV_2D()));
->>>>>>> Added conv and depthwise conv padding tests and some minor test suite improvements
 }
 
 TF_LITE_MICRO_TEST(InputOutputDifferentTypeIsError) {
@@ -258,12 +252,8 @@ TF_LITE_MICRO_TEST(InputOutputDifferentTypeIsError) {
   TF_LITE_MICRO_EXPECT_EQ(
       kTfLiteError, tflite::testing::InvokeTransposeConv(
                         tensors, tensors_size, output_dims_count,
-<<<<<<< HEAD
-                        &tflite::testing::common_conv_params, output_data));
-=======
                         &tflite::testing::common_conv_params,
-                        output_data, tflite::Register_TRANSPOSE_CONV_2D()));
->>>>>>> Added conv and depthwise conv padding tests and some minor test suite improvements
+                        output_data));
 }
 
 TF_LITE_MICRO_TEST(HybridModeIsError) {
@@ -301,12 +291,7 @@ TF_LITE_MICRO_TEST(HybridModeIsError) {
   TF_LITE_MICRO_EXPECT_EQ(
       kTfLiteError, tflite::testing::InvokeTransposeConv(
                         tensors, tensors_size, output_dims_count,
-<<<<<<< HEAD
                         &tflite::testing::common_conv_params, output_data));
-=======
-                        &tflite::testing::common_conv_params,
-                        output_data, tflite::Register_TRANSPOSE_CONV_2D()));
->>>>>>> Added conv and depthwise conv padding tests and some minor test suite improvements
 }
 
 TF_LITE_MICRO_TESTS_END
