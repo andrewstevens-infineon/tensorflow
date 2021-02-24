@@ -15,13 +15,10 @@ limitations under the License.
 
 /*
 IFX FAST
-Preinterpretation support:
-* TAGS="record_model autodump" -- Run using these tags to write the used kernel
-variants to a file
-* TAGS="recorded_model" -- Use this TAG to use previously recorded kernel
-variants
-*     Advantages: Smaller binaries, since only the required kernels are compiled
-*                 Smaller runtime, because many intermediate values are stored
+This optimized kernel directory contains optimized kernels.
+The kernels are portable to every hardware, no custom instructions are used.
+The kernels take advantage of precomputations, smaller tweaks and the prepare
+phase to reduce runtime and memory overhead.
 ==============================================================================*/
 
 #include "tensorflow/lite/kernels/internal/reference/integer_ops/conv.h"
