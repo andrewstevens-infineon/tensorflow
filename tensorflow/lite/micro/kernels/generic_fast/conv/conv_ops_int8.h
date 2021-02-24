@@ -21,9 +21,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/generic_fast/conv/conv_op_data.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace conv {
+namespace {
 
 TfLiteStatus EvalConvInt8WithoutPadding(TfLiteConvParams* params, OpData* data,
                                         const TfLiteEvalTensor* input,
@@ -69,9 +67,7 @@ TfLiteStatus EvalConvInt8(TfLiteConvParams* params, OpData* data,
   }
 }
 
-}  // namespace conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OPS_H_ */

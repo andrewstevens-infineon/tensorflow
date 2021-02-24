@@ -19,9 +19,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/internal/reference/conv.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace conv {
+namespace {
 
 inline PaddingType RuntimePaddingType(TfLitePadding padding) {
     switch (padding) {
@@ -145,9 +143,7 @@ TfLiteStatus EvalConvFloat(TfLiteConvParams* params, OpData* data,
   return kTfLiteOk;
 }
 
-}  // namespace conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_CONV_CONV_OPS_REF_H_ */

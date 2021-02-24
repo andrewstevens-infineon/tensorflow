@@ -29,9 +29,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace depthwise_conv {
+namespace {
 
 TfLiteStatus EvalUInt8Padding(TfLiteContext* context,
                               const TfLiteDepthwiseConvParams& params,
@@ -585,9 +583,7 @@ TfLiteStatus EvalUInt8Reference(TfLiteContext* context,
   return kTfLiteOk;
 }
 
-}  // namespace depthwise_conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 }  // namespace tflite
 
 #endif /* TENSORFLOW_LITE_MICRO_KERNELS_GENERIC_FAST_DEPTHWISE_CONV_OPS_H_ */

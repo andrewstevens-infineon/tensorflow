@@ -35,9 +35,7 @@ phase to reduce runtime and memory overhead.
 #include "tensorflow/lite/micro/kernels/generic_fast/depthwise_conv/depthwise_conv_ops.h"
 
 namespace tflite {
-namespace ops {
-namespace micro {
-namespace depthwise_conv {
+namespace {
 
 /*
  * Prepare function. This function is only run once before the invocations
@@ -190,15 +188,13 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
   return kTfLiteOk;
 }
 
-}  // namespace depthwise_conv
-}  // namespace micro
-}  // namespace ops
+}  // namespace
 
 TfLiteRegistration Register_DEPTHWISE_CONV_2D() {
-  return {/*init=*/ops::micro::depthwise_conv::Init,
-          /*free=*/nullptr,
-          /*prepare=*/ops::micro::depthwise_conv::Prepare,
-          /*invoke=*/ops::micro::depthwise_conv::Eval,
+  return {/*init=*/Init,
+          /*free=*/Free,
+          /*prepare=*/Prepare,
+          /*invoke=*/Eval,
           /*profiling_string=*/nullptr,
           /*builtin_code=*/0,
           /*custom_name=*/nullptr,
