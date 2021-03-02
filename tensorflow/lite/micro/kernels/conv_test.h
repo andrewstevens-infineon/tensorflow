@@ -70,7 +70,6 @@ TfLiteStatus TestConvFloat(const int* input_dims_data, const float* input_data,
                            TfLiteConvParams* conv_params,
                            TfLiteRegistration registration, float* output_data);
 
-
 TfLiteStatus TestConvQuantizedPerLayer(
     const int* input_dims_data, const float* input_data,
     uint8_t* input_quantized, float input_scale, const int* filter_dims_data,
@@ -78,8 +77,8 @@ TfLiteStatus TestConvQuantizedPerLayer(
     const int* bias_dims_data, const float* bias_data, int32_t* bias_quantized,
     const int* output_dims_data, const float* expected_output_data,
     uint8_t* expected_output_quantized, float output_scale,
-    TfLiteConvParams* conv_params, TfLiteRegistration registration,
-    uint8_t* output_data);
+    TfLiteConvParams* conv_params, uint8_t* output_data,
+    TfLiteRegistration registration = tflite::Register_CONV_2D());
 
 TfLiteStatus TestConvQuantizedPerChannel(
     const int* input_dims_data, const float* input_data,
@@ -90,7 +89,8 @@ TfLiteStatus TestConvQuantizedPerChannel(
     int* bias_zero_points, const int* output_dims_data,
     const float* expected_output_data, int8_t* expected_output_data_quantized,
     float output_scale, int output_zero_point, TfLiteConvParams* conv_params,
-    TfLiteRegistration registration, int8_t* output_data);
+    int8_t* output_data,
+    TfLiteRegistration registration = tflite::Register_CONV_2D());
 
 }  // namespace testing
 }  // namespace tflite
